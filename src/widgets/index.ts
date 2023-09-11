@@ -1,0 +1,6 @@
+export * from "./policy"
+export * from "./home"
+export * from "./login"
+export * from "./layout"
+export * from "./register"
+export * from "./profile"
