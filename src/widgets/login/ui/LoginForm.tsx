@@ -23,10 +23,16 @@ export const LoginForm = () => {
     } = useForm()
     function onSubmit(values) {
         authenticateUser(values.username, values.password).then(r =>
-            console.log(r)
-        ).catch(error =>
-            console.log(error)
-        )
+            userActions.afterLogin(r)
+        ).catch(error => {
+            if(error.response.status == 403) {
+                return setRequestError("Неверное имя пользователя или пароль")
+            } else if (error.response.status == 404) {
+                return setRequestError("Пользователь не найден")
+            } else {
+                return setRequestError("Неизвестная ошибка")
+            }
+        })
     }
     return (
         <Flex

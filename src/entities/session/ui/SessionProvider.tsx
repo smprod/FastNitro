@@ -1,7 +1,6 @@
 import {ReactElement, useEffect, useState} from "react";
 import {useRecoilState} from "recoil";
 import {sessionState} from "../model";
-import {api} from "@api";
 import jwt from "jwt-decode";
 
 export const SessionProvider = (props: {children: ReactElement | ReactElement[] }) => {
@@ -11,14 +10,10 @@ export const SessionProvider = (props: {children: ReactElement | ReactElement[] 
     useEffect(() => {
         if (session) return setLoading(false)
         if (token) {
-            api.defaults.headers.common["Authorization"] = `Bearer ${token}`
-        }
-
-        if (token) {
             const data = jwt(token).subject
             setSession(data)
         }
         else if (!token) setLoading(false)
     }, [session, setSession, token]);
-    return loading ? <></> : props.children
+    return loading ? <>Loading...</> : props.children
 }

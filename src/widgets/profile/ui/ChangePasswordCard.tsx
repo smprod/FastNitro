@@ -7,7 +7,7 @@ import {
     Input,
     InputGroup,
     InputLeftAddon,
-    Stack,
+    Stack, Text,
     useColorModeValue,
 } from '@chakra-ui/react'
 import {useForm} from "react-hook-form";
@@ -24,12 +24,30 @@ export const ChangePasswordCard = () => {
     } = useForm()
     const session = useRecoilValue(sessionState)
     const [passwordType, setPasswordType] = useState("password")
+    const [requestError, setRequestError] = useState("")
+    const [textColor, setTextColor] = useState("red")
     function onSubmit(values) {
         if (!session) {
             return "UNAUTHORIZED"
         }
-        console.log(session)
-        changePassword(session.username, values.old_password, values.password)
+        changePassword(session.username, values.old_password, values.password).then(
+            r => {
+                if (r.status === 200) {
+                    setTextColor("green")
+                    setRequestError("Всё прошло успешно")
+                } else {
+                    setRequestError("Произошла неизвестная ошибка")
+                }
+            }
+        ).catch(error => {
+            if(error.response.status === 403) {
+                return setRequestError("Неверное имя пользователя или пароль")
+            } else if (error.response.status === 404) {
+                return setRequestError("Пользователь не найден")
+            } else {
+                return setRequestError("Неизвестная ошибка")
+            }
+        })
     }
     return (
         <Flex
@@ -113,6 +131,9 @@ export const ChangePasswordCard = () => {
                                 <Checkbox onChange={() =>(passwordType === "password") ? setPasswordType("text") : setPasswordType("password")}>
                                     Показать пароль
                                 </Checkbox>
+                            </Center>
+                            <Center>
+                                <Text color={textColor}>{requestError}</Text>
                             </Center>
                             <Center>
                                 <Button

@@ -16,5 +16,5 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, "./src/assets"),
       "@api": path.resolve(__dirname, "./src/shared/api")
     }
-  }
+  },
 })
